@@ -5,13 +5,14 @@ import re
 import pandas as pd
 
 
-def fill_data(df, path_to_file, stat, i):
-    data.at[i, 'name'] = os.path.splitext(file)[0]
-    data.at[i, 'format'] = os.path.splitext(file)[1]
-    data.at[i, 'user id'] = stat.st_uid
-    data.at[i, 'size'] = stat.st_size
-    data.at[i, 'create'] = time.ctime(stat.st_mtime)
-    data.at[i, 'upgrade'] = time.ctime(stat.st_ctime)
+def fill_data(df, path_to_file, i):
+    stat = os.stat(path_to_file)
+    df.at[i, 'name'] = os.path.splitext(file)[0]
+    df.at[i, 'format'] = os.path.splitext(file)[1]
+    df.at[i, 'user id'] = stat.st_uid
+    df.at[i, 'size'] = stat.st_size
+    df.at[i, 'create'] = time.ctime(stat.st_mtime)
+    df.at[i, 'upgrade'] = time.ctime(stat.st_ctime)
 
 
 if __name__ == '__main__':
@@ -35,8 +36,7 @@ if __name__ == '__main__':
             for file in files:
                 if file.endswith('.pdf') or file.endswith('.xlsx'):
                     path_to_file = os.path.join(root, file)
-                    stat = os.stat(path_to_file)
-                    fill_data(data, path_to_file, stat, i)
+                    fill_data(data, path_to_file, i)
                     i = i + 1
                     error = False
 
@@ -53,8 +53,7 @@ if __name__ == '__main__':
                     error = False
 
         if not error:
-            stat = os.stat(path_to_file)
-            fill_data(data, path_to_file, stat, 0)
+            fill_data(data, path_to_file, 0)
 
     if not error:
         print(data)
